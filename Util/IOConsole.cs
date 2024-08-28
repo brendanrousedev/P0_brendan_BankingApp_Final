@@ -15,7 +15,7 @@ public static class IOConsole
 
     public static void WriteFarewell()
     {
-        AnsiConsole.MarkupLine("[blue]Thankyou for using The Bank of Arstotzka application[/]");
+        AnsiConsole.MarkupLine("[blue]Thank you for using The Bank of Arstotzka application[/]");
         AnsiConsole.MarkupLine("[blue]The program is now closing....[/]");
         PauseOutput();
     }
