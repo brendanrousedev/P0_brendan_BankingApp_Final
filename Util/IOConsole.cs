@@ -26,10 +26,10 @@ public static class IOConsole
         Console.ReadKey();
     }
 
-    public static string GetPassword(string userType)
+    public static string GetPassword(string purpose)
     {
         var password = AnsiConsole.Prompt(
-            new TextPrompt<string>($"Enter {userType} password:")
+            new TextPrompt<string>($"Enter {purpose} password:")
                 .PromptStyle("green")
                 .Secret('*')
                 .Validate(input =>
@@ -134,6 +134,50 @@ public static class IOConsole
                 account.AccType,
                 "$" + account.Balance.ToString(),
                 account.IsActive.ToString()
+        );
+
+        AnsiConsole.Write(table);
+    }
+
+    public static void WritePartialAccountDetails(Account account)
+    {
+        var table = new Table();
+        const string ACC_ID = "AccId",
+            ACC_TYPE = "AccType",
+            BALANCE = "Balance",
+            IS_ACTIVE = "Is Active";
+
+        table.AddColumn(ACC_ID);
+        table.AddColumn(ACC_TYPE);
+        table.AddColumn(BALANCE);
+        table.AddColumn(IS_ACTIVE);
+
+        table.AddRow(account.AccId.ToString(),
+                account.AccType,
+                "$" + account.Balance.ToString(),
+                account.IsActive.ToString()
+        );
+
+        AnsiConsole.Write(table);
+    }
+
+    public static void WriteTransactionLogDetails(TransactionLog tl)
+    {
+        var table = new Table();
+        const string TL_ID = "TransActionId",
+            TL_TYPE = "TransactionType",
+            AMOUNT = "Amount",
+            TL_DATE = "TransactionDate";
+
+        table.AddColumn(TL_ID);
+        table.AddColumn(TL_TYPE);
+        table.AddColumn(AMOUNT);
+        table.AddColumn(TL_DATE);
+
+        table.AddRow(tl.TransactionId.ToString(),
+                tl.TransactionType,
+                "$" + tl.Amount.ToString(),
+                tl.TransactionDate.ToString()
         );
 
         AnsiConsole.Write(table);

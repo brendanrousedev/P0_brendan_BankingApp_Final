@@ -21,4 +21,10 @@ public static class RequestDao
         
         Context.SaveChanges();
     }
+
+    public static void CreateRequest(P0BrendanBankingDbContext Context, Request request)
+    {
+        Context.Requests.Add(request);
+        Context.SaveChanges();
+    }
 }

@@ -15,7 +15,7 @@ public static class TransactionLogDao
             Context.SaveChanges();
     }
 
-    internal static void DeleteAllTransactionsForAccount(P0BrendanBankingDbContext Context, Account account)
+    public static void DeleteAllTransactionsForAccount(P0BrendanBankingDbContext Context, Account account)
     {
         foreach (var tl in Context.TransactionLogs)
         {
@@ -27,4 +27,15 @@ public static class TransactionLogDao
 
         Context.SaveChanges();
     }
+
+    public static List<TransactionLog> GetTransactionLogs(P0BrendanBankingDbContext context, Customer customer, int limit)
+    {
+        return context.TransactionLogs
+            .Where(t => t.Acc.CustomerId == customer.CustomerId)
+            .OrderByDescending(t => t.TransactionDate)
+            .Take(limit)
+            .ToList();
+    }
+
+    
 }

@@ -38,4 +38,24 @@ public static class AccountDao
         Context.Accounts.Add(account);
         Context.SaveChanges();
     }
+
+    public static void WithdrawFunds(P0BrendanBankingDbContext context, Account account, decimal amount)
+    {
+        account.Balance -= amount;
+        context.SaveChanges();
+    }
+
+    public static void DepositFunds(P0BrendanBankingDbContext context, Account account, decimal amount)
+    {
+        if (account.AccType == "Loan")
+        {
+            account.Balance -= amount;
+        }
+        else
+        {
+            account.Balance += amount;
+        }
+
+        context.SaveChanges();
+    }
 }

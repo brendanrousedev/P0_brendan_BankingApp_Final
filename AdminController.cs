@@ -275,7 +275,7 @@ public class AdminController
         AnsiConsole.Clear();
 
         const string CHECKING = "Checking", SAVINGS = "Savings", LOAN = "Loan";
-        MENU_NAME = "*******************\n"
+        MENU_NAME = "*******************"
                 + "\nUpdate Account Type"
                 + "\n*******************";
 
@@ -316,7 +316,7 @@ public class AdminController
         Customer customer = CustomerDao.GetCustomerByUsername(Context, username);
         if (customer == null)
         {
-            AnsiConsole.MarkupLine($"[red]A customer with that username could not be found.");
+            AnsiConsole.MarkupLine($"[red]A customer with that username could not be found.[/]");
         }
         else
         {
@@ -346,7 +346,7 @@ public class AdminController
     {
         AnsiConsole.Clear();
 
-        MENU_NAME = "********************"
+        MENU_NAME = "********************\n"
                   + "Create a New Account\n"
                   + "********************";
         
@@ -367,7 +367,7 @@ public class AdminController
         Customer? customer = Context.Customers.SingleOrDefault(c => c.CustomerUsername == username);
         if (customer == null)
         {
-            AnsiConsole.MarkupLine($"[red]{username} was not found.");
+            AnsiConsole.MarkupLine($"[red]{username} was not found.[/]");
             if (AnsiConsole.Confirm($"Add {username} as a customer?"))
             {
                 string defaultPassword = "password1";
@@ -380,7 +380,7 @@ public class AdminController
                 };
 
                 CustomerDao.CreateCustomer(Context, customer);
-                AnsiConsole.MarkupLine($"[blue]{username} was successfully added!");
+                AnsiConsole.MarkupLine($"[blue]{username} was successfully added![/]");
                 IOConsole.PauseOutput();
             }
             else

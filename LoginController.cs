@@ -59,7 +59,7 @@ public class LoginController
                     password = IOConsole.GetPassword(CUSTOMER);
                     if (this.VerifyCustomer(username, password))
                     {
-                        IOConsole.WriteLoginSuccess(username, ADMIN);
+                        IOConsole.WriteLoginSuccess(username, CUSTOMER);
                         CustomerController cc = new CustomerController(Context, CustomerDao.GetCustomerByUsername(Context, username));
                         cc.Run();
                     }
