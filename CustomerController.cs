@@ -203,12 +203,22 @@ public class CustomerController
             AnsiConsole.MarkupLine("[red]Cannot perform transfer because the from account is a loan.[/]");
             return;
         }
+        else if (!fromAccount.IsActive)
+        {
+            AnsiConsole.MarkupLine("[red]Cannot perform transfer because the sending account is not active[/]");
+            return;
+        }
 
         AnsiConsole.WriteLine("2. Enter the Account Id you are transferring the funds to.");
         Account toAccount = AccountDao.GetAccountById(Context, IOConsole.GetAccountId());
         if (toAccount == null)
         {
             AnsiConsole.MarkupLine("[red]The account does not exist...[/]");
+            return;
+        }
+        else if (!fromAccount.IsActive)
+        {
+            AnsiConsole.MarkupLine("[red]Cannot perform transfer because the receiving account is not active[/]");
             return;
         }
         else if (toAccount.CustomerId != customer.CustomerId)
@@ -264,6 +274,11 @@ public class CustomerController
             }
 
         }
+        else if (!account.IsActive)
+        {
+            AnsiConsole.MarkupLine("[red]Cannot deposit funds because the account is not active[/]");
+            return;
+        }
 
         var amount = IOConsole.GetAmount();
         AccountDao.DepositFunds(Context, account, amount);
@@ -295,6 +310,11 @@ public class CustomerController
         else if (account.AccType == "Loan")
         {
             AnsiConsole.MarkupLine("[red]Cannot withdraw from this account type.[/]");
+            return;
+        }
+        else if (!account.IsActive)
+        {
+            AnsiConsole.MarkupLine("[red]Cannot withdraw funds because the account is not active[/]");
             return;
         }
 
