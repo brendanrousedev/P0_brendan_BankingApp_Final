@@ -140,10 +140,159 @@ public class AdminController
 
     private void GetSummary()
     {
-        throw new NotImplementedException();
+        AnsiConsole.Clear();
+        MENU_NAME = "****************"
+                + "\nDatabase Summary"
+                + "\n****************";
+
+        IOConsole.WriteMenu(MENU_NAME);
+        var tableCount = new Table();
+        tableCount.AddColumn("Table");
+        tableCount.AddColumn("Count");
+
+        const string ADMINS = "Administrators", CUSTOMERS = "Customers", ACCOUNTS = "Accounts", TRANSACTION_LOGS = "Transactions Logs", REQUESTS = "Requests";
+
+        int adminCount = Context.Admins.Count();
+        int customerCount = Context.Customers.Count();
+        int accountCount = Context.Accounts.Count();
+        int transactionCount = Context.TransactionLogs.Count();
+        int requestCount = Context.Requests.Count();
+
+        tableCount.AddRow(ADMINS, adminCount.ToString());
+        tableCount.AddRow(CUSTOMERS, customerCount.ToString());
+        tableCount.AddRow(ACCOUNTS, accountCount.ToString());
+        tableCount.AddRow(TRANSACTION_LOGS, transactionCount.ToString());
+        tableCount.AddRow(REQUESTS, requestCount.ToString());
+
+        AnsiConsole.Write(tableCount);
+        AnsiConsole.WriteLine();
+
+        var tableAverage = new Table();
+        tableAverage.AddColumn("Average Account Balance");
+        tableAverage.AddColumn("Average Transaction Balance");
+
+        decimal balanceAvg = Context.Accounts.Average(a => a.Balance);
+        decimal transactionAvg = Context.TransactionLogs.Average(t => t.Amount);
+
+        tableAverage.AddRow("$" + balanceAvg.ToString(), "$" + transactionAvg.ToString());
+        AnsiConsole.Write(tableAverage);
     }
 
     private void UpdateAccount()
+    {
+        AnsiConsole.Clear();
+        MENU_NAME = "****************"
+                  + "\nUpdate Account"
+                  + "\n**************";
+        IOConsole.WriteMenu(MENU_NAME);
+        var account = AccountDao.GetAccountById(Context, IOConsole.GetAccountId());
+
+        if (account == null)
+        {
+            AnsiConsole.MarkupLine("[red]There is no Account with that ID number.[/]");
+        }
+
+        else
+        {
+            UpdateAccount(account);
+        }
+
+    }
+
+    private void UpdateAccount(Account account)
+    {
+        AnsiConsole.Clear();
+        const string TYPE = "Account Type", IS_ACTIVE = "Active Status", BALANCE = "Balance", CANCEL = "Cancel";
+        MENU_NAME = "*******************************************************\n"
+                  + $"Update Account No. {account.AccId} for Customer {account.Customer.CustomerUsername}\n"
+                  + "*********************************************************";
+        IOConsole.WriteMenu(MENU_NAME);
+        var menu = new SelectionPrompt<string>()
+                    .Title("Use the arrow keys to select an option")
+                  .PageSize(10)
+                  .HighlightStyle(new Style(foreground: Color.Green, background: Color.Black))
+                  .AddChoices(new[] {
+                        TYPE,
+                        IS_ACTIVE,
+                        BALANCE,
+                        CANCEL,
+                  });
+
+        var choice = AnsiConsole.Prompt(menu);
+        switch (choice)
+        {
+            case TYPE:
+                UpdateAccountType(account);
+                break;
+            case IS_ACTIVE:
+                UpdateIsActive(account);
+                break;
+            case BALANCE:
+                UpdateBalance(account);
+                break;
+            case CANCEL:
+                if (AnsiConsole.Confirm("Cancel account update?"))
+                {
+                    AnsiConsole.WriteLine("Cancelling account update. Press any key to reutn to the Admin menu...");
+                    
+                    return;
+                }
+                break;
+        }
+    }
+
+    private void UpdateBalance(Account account)
+    {
+        decimal beforeBalance = account.Balance;
+        var amount = AnsiConsole.Prompt(
+            new TextPrompt<decimal>("What is the new account balance? $")
+                        .PromptStyle("green")
+                        .ValidationErrorMessage("[red]That's not a valid number.[/]")
+                        .Validate(amount =>
+                        {
+                            return amount switch
+                            {
+                                < 0m => ValidationResult.Error("Amount cannot be negative.[/]"),
+                                _ => ValidationResult.Success(),
+
+                            };
+                        }));
+        if (AnsiConsole.Confirm($"Set account balance to ${amount}?"))
+        {
+            TransactionLog tl = new TransactionLog
+            {
+                AccId = account.AccId,
+                Account = account,
+                Amount = amount,
+                TransactionDate = DateTime.Now,
+                TransactionType = "Adjustment"
+            };
+            Context.TransactionLogs.Add(tl);
+            account.Balance = amount;
+
+
+            Context.SaveChanges();
+            AnsiConsole.WriteLine();
+            AnsiConsole.MarkupLine($"[blue]Balance Before: ${beforeBalance}[/]");
+            AnsiConsole.MarkupLine($"[blue]Balance After: ${account.Balance}[/]");
+            AnsiConsole.WriteLine();
+            AnsiConsole.MarkupLine("[blue]Enter any key to return to the menu...[/]");
+            
+        }
+        else
+        {
+            AnsiConsole.Clear();
+            AnsiConsole.MarkupLine("[yellow]Balance was not updated. Press any key to return to the menu...[/]");
+            
+        }
+    }
+
+    private void UpdateIsActive(Account account)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void UpdateAccountType(Account account)
     {
         throw new NotImplementedException();
     }

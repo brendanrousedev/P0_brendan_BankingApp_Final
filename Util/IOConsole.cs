@@ -41,6 +41,23 @@ public static class IOConsole
         return password;
     }
 
+    public static int GetAccountId()
+    {
+        var accountId = AnsiConsole.Prompt(
+            new TextPrompt<decimal>("What is the Account ID?")
+                        .PromptStyle("green")
+                        .ValidationErrorMessage("[red]That's not a valid Id.[/]")
+                        .Validate(amount =>
+                        {
+                            return amount switch
+                            {
+                                _ => ValidationResult.Success(),
+
+                            };
+                        }));
+        return (int) accountId;
+    }
+
     public static string GetUsername(string userType)
     {
         var username = AnsiConsole.Prompt(
