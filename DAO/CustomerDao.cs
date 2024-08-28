@@ -10,4 +10,13 @@ public static class CustomerDao
 
         return customer;
     }
+
+    public static void ResetPassword(P0BrendanBankingDbContext Context, Customer customer)
+    {
+            string defaultPassword = "password1";
+            byte[] salt = PasswordUtils.GenerateSalt();
+            customer.PasswordHash = PasswordUtils.HashPassword(defaultPassword, salt);
+            customer.Salt = salt;
+            Context.SaveChanges();
+    }
 }

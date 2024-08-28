@@ -14,9 +14,7 @@ public class AdminController
     {
         Context = context;
         this.admin = admin;
-        MENU_NAME = "********************************\n" +
-                    $"Admin Menu - {admin.AdminUsername}\n" +
-                    "**********************************";
+        
     }
 
     public void Run()
@@ -28,12 +26,13 @@ public class AdminController
         RESET = "Reset Customer Password",
         APPROVE = "Approve Checkbook Request",
         EXIT = "Exit to Main Menu";
+        MENU_NAME = "***************************\n" +
+                    $"Admin Menu - {admin.AdminUsername}\n" +
+                    "***************************";
 
 
         var menu = new SelectionPrompt<string>()
-            .Title("***************************"
-                  + $"\nAdmin menu - {admin.AdminUsername}"
-                  + "\n***************************")
+            .Title("Use the arrow keys to select an operation")
             .PageSize(10)
             .HighlightStyle(new Style(foreground: Color.Green, background: Color.Black))
             .AddChoices(new[] {
@@ -49,6 +48,8 @@ public class AdminController
         bool isRunning = true;
         while (isRunning)
         {
+            AnsiConsole.Clear();
+            IOConsole.WriteMenu(MENU_NAME);
             var choice = AnsiConsole.Prompt(menu);
             switch (choice)
             {
@@ -77,18 +78,64 @@ public class AdminController
                     }
                     break;
             }
-            Console.ReadKey();
+
+            IOConsole.PauseOutput();
         }
     }
 
     private void ApproveAllCheckbookRequests()
     {
-        throw new NotImplementedException();
+        MENU_NAME = "***************************\n" +
+                    $"Approve Checkbook Requests\n" +
+                    "***************************";
+        AnsiConsole.Clear();
+        IOConsole.WriteMenu(MENU_NAME);
+        int requestCount = RequestDao.GetCheckbookRequestCount(Context);
+        if (requestCount == 0)
+        {
+            AnsiConsole.MarkupLine("[red]There are no open requests.[/]");
+            
+        }
+        else if (AnsiConsole.Confirm($"There are {requestCount} request(s) open, approve all?"))
+        {
+            RequestDao.ApproveAllCheckbookRequests(Context);
+            AnsiConsole.Markup($"[blue]All {requestCount} request(s) have been approved! Press any key to continue...[/]");
+            
+        }
+        else
+        {
+            AnsiConsole.MarkupLine("[yellow]No checkbook requests were approved.[/]");
+            IOConsole.PauseOutput();
+        }
+
+
     }
 
     private void ResetCustomerPassword()
     {
-        throw new NotImplementedException();
+
+        MENU_NAME = "***********************\n"
+                  + "Reset Customer Password\n"
+                  + "***********************";
+        AnsiConsole.Clear();
+        IOConsole.WriteMenu(MENU_NAME);
+
+        var username = IOConsole.GetUsername("Customer");
+        Customer? customer = CustomerDao.GetCustomerByUsername(Context, username);
+        if (customer == null)
+        {
+            AnsiConsole.MarkupLine($"[red]{customer} could not be found.");
+        }
+
+        else if (AnsiConsole.Confirm($"Reset password for {username}?"))
+        {
+            CustomerDao.ResetPassword(Context, customer);
+            AnsiConsole.WriteLine($"\nThe password for {username} was reset to the default!");
+        }
+        else
+        {
+            AnsiConsole.MarkupLine("[yellow]No password was reset for any customer.[/]");
+        }
     }
 
     private void GetSummary()

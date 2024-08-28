@@ -21,7 +21,7 @@ public class LoginController
 
         const string ADMIN = "Administrator", CUSTOMER = "Customer", EXIT = "Exit";
         var menu = new SelectionPrompt<string>()
-            .Title("What type of user are you?")
+            .Title("Use the arrow keys to select what type of user you are")
             .PageSize(10)
             .HighlightStyle(new Style(foreground: Color.Green, background: Color.Black))
             .AddChoices(new[] {
