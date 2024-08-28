@@ -46,7 +46,7 @@ public class AdminController
         while (isRunning)
         {
             MENU_NAME = "***************************\n" +
-                    $"Admin Menu - {admin.AdminUsername}\n" +
+                    $"{admin.AdminUsername} - Admin Menu\n" +
                     "***************************";
             AnsiConsole.Clear();
             IOConsole.WriteMenu(MENU_NAME);
