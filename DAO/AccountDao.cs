@@ -32,4 +32,10 @@ public static class AccountDao
         Context.Remove(account);
         Context.SaveChanges();
     }
+
+    public static void CreateAccount(P0BrendanBankingDbContext Context, Account account)
+    {
+        Context.Accounts.Add(account);
+        Context.SaveChanges();
+    }
 }

@@ -26,9 +26,6 @@ public class AdminController
         RESET = "Reset Customer Password",
         APPROVE = "Approve Checkbook Request",
         EXIT = "Exit to Main Menu";
-        MENU_NAME = "***************************\n" +
-                    $"Admin Menu - {admin.AdminUsername}\n" +
-                    "***************************";
 
 
         var menu = new SelectionPrompt<string>()
@@ -48,6 +45,9 @@ public class AdminController
         bool isRunning = true;
         while (isRunning)
         {
+            MENU_NAME = "***************************\n" +
+                    $"Admin Menu - {admin.AdminUsername}\n" +
+                    "***************************";
             AnsiConsole.Clear();
             IOConsole.WriteMenu(MENU_NAME);
             var choice = AnsiConsole.Prompt(menu);
@@ -336,7 +336,7 @@ public class AdminController
                 {
                     TransactionLogDao.DeleteAllTransactionsForAccount(Context, account);
                     AccountDao.DeleteAccount(Context, account);
-                    AnsiConsole.MarkupLine("[blue]The account was successfully deleted.");
+                    AnsiConsole.MarkupLine("[blue]The account was successfully deleted.[/]");
                 }
             }
         }
@@ -344,6 +344,84 @@ public class AdminController
 
     private void CreateAccount()
     {
-        throw new NotImplementedException();
+        AnsiConsole.Clear();
+
+        MENU_NAME = "********************"
+                  + "Create a New Account\n"
+                  + "********************";
+        
+        const string CHECKING = "Checking", SAVINGS = "Savings", LOAN = "Loan", CANCEL = "Cancel";
+        var menu = new SelectionPrompt<string>()
+                    .Title("Use the arrow keys to select an Account Type")
+                  .PageSize(5)
+                  .AddChoices(new[] {
+                    CHECKING,
+                    SAVINGS,
+                    LOAN,
+                    CANCEL
+                  });
+
+
+        IOConsole.WriteMenu(MENU_NAME);
+        var username = IOConsole.GetUsername("Customer");
+        Customer? customer = Context.Customers.SingleOrDefault(c => c.CustomerUsername == username);
+        if (customer == null)
+        {
+            AnsiConsole.MarkupLine($"[red]{username} was not found.");
+            if (AnsiConsole.Confirm($"Add {username} as a customer?"))
+            {
+                string defaultPassword = "password1";
+                byte[] salt = PasswordUtils.GenerateSalt();
+                customer = new Customer()
+                {
+                    CustomerUsername = username,
+                    PasswordHash = PasswordUtils.HashPassword(defaultPassword, salt),
+                    Salt = salt
+                };
+
+                CustomerDao.CreateCustomer(Context, customer);
+                AnsiConsole.MarkupLine($"[blue]{username} was successfully added!");
+                IOConsole.PauseOutput();
+            }
+            else
+            {
+                AnsiConsole.MarkupLine("[yellow]Cancelling account creation and returning to Admin menu...[/]");
+                
+                return;
+            }
+        }
+
+        var choice = AnsiConsole.Prompt(menu);
+        switch (choice)
+        {
+            case CANCEL:
+                if (AnsiConsole.Confirm("Cancel account creation?"))
+                {
+                    AnsiConsole.MarkupLine("[yellow]Cancelling account creating and returning to Admin menu...[/]");
+                    return;
+                }
+                break;
+        }
+
+        if (AnsiConsole.Confirm($"Create a {choice} account for {username}?"))
+        {
+
+            Account account = new Account()
+            {
+                CustomerId = customer.CustomerId,
+                AccType = choice,
+                Balance = 0m,
+                IsActive = true
+            };
+
+            AccountDao.CreateAccount(Context, account);
+            AnsiConsole.MarkupLine("[blue]Successfully created the account![/]");
+            IOConsole.WriteAllAccountDetails(account);
+            
+        }
+        else
+        {
+            AnsiConsole.MarkupLine("[yellow]Cancelling account creating and returning to Admin menu...[/]");
+        }
     }
 }

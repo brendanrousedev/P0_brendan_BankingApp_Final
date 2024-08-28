@@ -19,4 +19,10 @@ public static class CustomerDao
             customer.Salt = salt;
             Context.SaveChanges();
     }
+
+    public static void CreateCustomer(P0BrendanBankingDbContext Context, Customer customer)
+    {
+        Context.Customers.Add(customer);
+        Context.SaveChanges();
+    }
 }
