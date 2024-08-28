@@ -18,4 +18,18 @@ public static class AccountDao
         account.AccType = type;
         Context.SaveChanges();
     }
+
+    public static List<Account> GetAllAccountsByUsername(P0BrendanBankingDbContext Context, Customer customer)
+    {
+        List<Account> customerAccount = new List<Account>();
+        return Context.Accounts
+                .Where(a => a.CustomerId == customer.CustomerId)
+                .ToList();
+    }
+
+    public static void DeleteAccount(P0BrendanBankingDbContext Context, Account account)
+    {
+        Context.Remove(account);
+        Context.SaveChanges();
+    }
 }

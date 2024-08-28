@@ -263,7 +263,11 @@ public class AdminController
 
     private void UpdateIsActive(Account account)
     {
-        throw new NotImplementedException();
+        bool isActive = AnsiConsole.Confirm("Is the Account Active?");
+        account.IsActive = isActive;
+        Context.SaveChanges();
+        AnsiConsole.WriteLine();
+        AnsiConsole.MarkupLine($"[blue]Successfully updated Is Active: {account.IsActive}.[/]");
     }
 
     private void UpdateAccountType(Account account)
@@ -304,7 +308,38 @@ public class AdminController
 
     private void DeleteAccount()
     {
-        throw new NotImplementedException();
+        MENU_NAME = "**************\n"
+                  + "Delete Account\n"
+                  + "**************\n";
+
+        var username = IOConsole.GetUsername("Customer");
+        Customer customer = CustomerDao.GetCustomerByUsername(Context, username);
+        if (customer == null)
+        {
+            AnsiConsole.MarkupLine($"[red]A customer with that username could not be found.");
+        }
+        else
+        {
+            List<Account> accountList = AccountDao.GetAllAccountsByUsername(Context, customer);
+            IOConsole.WriteAllAccountDetails(accountList);
+            var accountId = IOConsole.GetAccountId();
+            Account account = AccountDao.GetAccountById(Context, accountId);
+            if (account == null || !accountList.Contains(account))
+            {
+                AnsiConsole.MarkupLine("[red]An account with that ID could not be found for this user.[/]");
+            }
+            else
+            {
+                AnsiConsole.MarkupLine("[red]WARNING: Account deletion will also delete all related transactions and requests.[/]");
+                AnsiConsole.WriteLine();
+                if (AnsiConsole.Confirm("Are you sure you want to delete this account?"))
+                {
+                    TransactionLogDao.DeleteAllTransactionsForAccount(Context, account);
+                    AccountDao.DeleteAccount(Context, account);
+                    AnsiConsole.MarkupLine("[blue]The account was successfully deleted.");
+                }
+            }
+        }
     }
 
     private void CreateAccount()

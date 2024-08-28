@@ -14,4 +14,17 @@ public static class TransactionLogDao
             };
             Context.SaveChanges();
     }
+
+    internal static void DeleteAllTransactionsForAccount(P0BrendanBankingDbContext Context, Account account)
+    {
+        foreach (var tl in Context.TransactionLogs)
+        {
+            if (tl.AccId == account.AccId)
+            {
+                Context.Remove(tl);
+            }
+        }
+
+        Context.SaveChanges();
+    }
 }

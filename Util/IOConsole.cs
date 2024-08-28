@@ -1,3 +1,4 @@
+using P0_brendan_BankingApp_Final.POCO;
 using Spectre.Console;
 
 public static class IOConsole
@@ -100,5 +101,41 @@ public static class IOConsole
                         }));
 
         return amount;
+    }
+
+    public static void WriteAllAccountDetails(List<Account> accounts)
+    {
+        foreach(var account in accounts)
+        {
+            WriteAllAccountDetails(account);
+        }
+    }
+
+    public static void WriteAllAccountDetails(Account account)
+    {
+        var table = new Table();
+        const string ACC_ID = "AccId",
+            CUSTOMER_NAME = "CustomerUsername",
+            CUSTOMER_ID = "CustomerId",
+            ACC_TYPE = "AccType",
+            BALANCE = "Balance",
+            IS_ACTIVE = "Is Active";
+
+        table.AddColumn(ACC_ID);
+        table.AddColumn(CUSTOMER_NAME);
+        table.AddColumn(CUSTOMER_ID);
+        table.AddColumn(ACC_TYPE);
+        table.AddColumn(BALANCE);
+        table.AddColumn(IS_ACTIVE);
+
+        table.AddRow(account.AccId.ToString(),
+                account.Customer.CustomerUsername,
+                account.CustomerId.ToString(),
+                account.AccType,
+                "$" + account.Balance.ToString(),
+                account.IsActive.ToString()
+        );
+
+        AnsiConsole.Write(table);
     }
 }
