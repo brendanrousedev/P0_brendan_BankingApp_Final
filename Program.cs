@@ -30,5 +30,6 @@ public class Program
         IOConsole.PauseOutput();
         LoginController lc = new LoginController(Context);
         lc.Run();
+        IOConsole.WriteFarewell();
     }
 }

@@ -155,13 +155,8 @@ public class CustomerController
             return;
         }
 
-        byte[] salt = PasswordUtils.GenerateSalt();
-        customer.Salt = salt;
-        customer.PasswordHash = PasswordUtils.HashPassword(newPassword1, salt);
-        Context.SaveChanges();
-        AnsiConsole.WriteLine();
+        CustomerDao.ResetPassword(Context, customer, newPassword1);
         AnsiConsole.MarkupLine("[blue]Your password was successfully changed![/]");
-        AnsiConsole.WriteLine("\nPress any key to return to the customer menu...");
     }
 
     private void ViewHistory()
@@ -334,6 +329,5 @@ public class CustomerController
             IOConsole.WritePartialAccountDetails(account);
             AnsiConsole.WriteLine();
         }
-        AnsiConsole.WriteLine("\nPress any key to return to the customer menu...");
     }
 }

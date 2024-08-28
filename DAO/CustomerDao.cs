@@ -20,6 +20,14 @@ public static class CustomerDao
             Context.SaveChanges();
     }
 
+    public static void ResetPassword(P0BrendanBankingDbContext Context, Customer customer, string newPassword)
+    {
+            byte[] salt = PasswordUtils.GenerateSalt();
+            customer.PasswordHash = PasswordUtils.HashPassword(newPassword, salt);
+            customer.Salt = salt;
+            Context.SaveChanges();
+    }
+
     public static void CreateCustomer(P0BrendanBankingDbContext Context, Customer customer)
     {
         Context.Customers.Add(customer);
