@@ -130,3 +130,4 @@ C:\Users\brend\revature\P0_brendan_BankingApp_Final\obj\Debug\net8.0\P0_brendan_
 C:\Users\brend\revature\P0_brendan_BankingApp_Final\obj\Debug\net8.0\ref\P0_brendan_BankingApp_Final.dll
 C:\Users\brend\revature\P0_brendan_BankingApp_Final\bin\Debug\net8.0\Newtonsoft.Json.dll
 C:\Users\brend\revature\P0_brendan_BankingApp_Final\bin\Debug\net8.0\Spectre.Console.dll
+C:\Users\brend\revature\P0_brendan_BankingApp_Final\obj\Debug\net8.0\P0_brendan_BankingApp_Final.sourcelink.json

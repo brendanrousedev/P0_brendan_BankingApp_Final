@@ -45,5 +45,69 @@ public class AdminController
                 APPROVE,
                 EXIT
             });
+
+        bool isRunning = true;
+        while (isRunning)
+        {
+            var choice = AnsiConsole.Prompt(menu);
+            switch (choice)
+            {
+                case CREATE:
+                    CreateAccount();
+                    break;
+                case DELETE:
+                    DeleteAccount();
+                    break;
+                case UPDATE:
+                    UpdateAccount();
+                    break;
+                case SUMMARY:
+                    GetSummary();
+                    break;
+                case RESET:
+                    ResetCustomerPassword();
+                    break;
+                case APPROVE:
+                    ApproveAllCheckbookRequests();
+                    break;
+                case EXIT:
+                    if (AnsiConsole.Confirm("Return to the main menu?"))
+                    {
+                        isRunning = false;
+                    }
+                    break;
+            }
+            Console.ReadKey();
+        }
+    }
+
+    private void ApproveAllCheckbookRequests()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void ResetCustomerPassword()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void GetSummary()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void UpdateAccount()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void DeleteAccount()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void CreateAccount()
+    {
+        throw new NotImplementedException();
     }
 }
