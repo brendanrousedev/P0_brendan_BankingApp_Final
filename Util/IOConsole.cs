@@ -82,4 +82,23 @@ public static class IOConsole
         WriteMenu(SUCCESS);
         PauseOutput();
     }
+
+    public static decimal GetAmount()
+    {
+        var amount = AnsiConsole.Prompt(
+            new TextPrompt<decimal>("What is the amount? $")
+                        .PromptStyle("green")
+                        .ValidationErrorMessage("[red]That's not a valid number.[/]")
+                        .Validate(amount =>
+                        {
+                            return amount switch
+                            {
+                                < 0m => ValidationResult.Error("Amount cannot be negative.[/]"),
+                                _ => ValidationResult.Success(),
+
+                            };
+                        }));
+
+        return amount;
+    }
 }

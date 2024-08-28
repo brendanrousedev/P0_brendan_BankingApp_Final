@@ -14,7 +14,7 @@ public class AdminController
     {
         Context = context;
         this.admin = admin;
-        
+
     }
 
     public void Run()
@@ -94,13 +94,13 @@ public class AdminController
         if (requestCount == 0)
         {
             AnsiConsole.MarkupLine("[red]There are no open requests.[/]");
-            
+
         }
         else if (AnsiConsole.Confirm($"There are {requestCount} request(s) open, approve all?"))
         {
             RequestDao.ApproveAllCheckbookRequests(Context);
             AnsiConsole.Markup($"[blue]All {requestCount} request(s) have been approved! Press any key to continue...[/]");
-            
+
         }
         else
         {
@@ -234,7 +234,7 @@ public class AdminController
                 if (AnsiConsole.Confirm("Cancel account update?"))
                 {
                     AnsiConsole.WriteLine("Cancelling account update. Press any key to reutn to the Admin menu...");
-                    
+
                     return;
                 }
                 break;
@@ -244,46 +244,20 @@ public class AdminController
     private void UpdateBalance(Account account)
     {
         decimal beforeBalance = account.Balance;
-        var amount = AnsiConsole.Prompt(
-            new TextPrompt<decimal>("What is the new account balance? $")
-                        .PromptStyle("green")
-                        .ValidationErrorMessage("[red]That's not a valid number.[/]")
-                        .Validate(amount =>
-                        {
-                            return amount switch
-                            {
-                                < 0m => ValidationResult.Error("Amount cannot be negative.[/]"),
-                                _ => ValidationResult.Success(),
-
-                            };
-                        }));
+        var amount = IOConsole.GetAmount();
         if (AnsiConsole.Confirm($"Set account balance to ${amount}?"))
         {
-            TransactionLog tl = new TransactionLog
-            {
-                AccId = account.AccId,
-                Account = account,
-                Amount = amount,
-                TransactionDate = DateTime.Now,
-                TransactionType = "Adjustment"
-            };
-            Context.TransactionLogs.Add(tl);
-            account.Balance = amount;
-
-
-            Context.SaveChanges();
-            AnsiConsole.WriteLine();
+            AccountDao.UpdateAccountBalance(Context, account, amount);
+            TransactionLogDao.CreateTransactionLog(Context, account, amount, "Adjustment");
             AnsiConsole.MarkupLine($"[blue]Balance Before: ${beforeBalance}[/]");
             AnsiConsole.MarkupLine($"[blue]Balance After: ${account.Balance}[/]");
-            AnsiConsole.WriteLine();
-            AnsiConsole.MarkupLine("[blue]Enter any key to return to the menu...[/]");
-            
+
         }
         else
         {
             AnsiConsole.Clear();
             AnsiConsole.MarkupLine("[yellow]Balance was not updated. Press any key to return to the menu...[/]");
-            
+
         }
     }
 
@@ -294,7 +268,38 @@ public class AdminController
 
     private void UpdateAccountType(Account account)
     {
-        throw new NotImplementedException();
+        AnsiConsole.Clear();
+
+        const string CHECKING = "Checking", SAVINGS = "Savings", LOAN = "Loan";
+        MENU_NAME = "*******************\n"
+                + "\nUpdate Account Type"
+                + "\n*******************";
+
+        IOConsole.WriteMenu(MENU_NAME);
+
+        var menu = new SelectionPrompt<string>()
+                    .Title("Use the arrow keys to update the account type")
+                    .HighlightStyle(new Style(foreground: Color.Green, background: Color.Black))
+                    .PageSize(10)
+                    .AddChoices(new[] {
+                       CHECKING,
+                       SAVINGS,
+                       LOAN
+                    });
+
+        var choice = AnsiConsole.Prompt(menu);
+        AnsiConsole.WriteLine();
+        if (AnsiConsole.Confirm($"Set the account type to {choice}?"))
+        {
+            AccountDao.UpdateAccountType(Context, account, choice);
+            AnsiConsole.MarkupLine($"Account type was set to {choice}! Press any key to return to the menu.");
+
+        }
+        else
+        {
+            AnsiConsole.MarkupLine("[yellow]The account type was not updated. Press any key to return to the menu...[/]");
+
+        }
     }
 
     private void DeleteAccount()
