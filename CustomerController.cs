@@ -133,12 +133,11 @@ public class CustomerController
     {
         const string OLD = "your old", NEW = "your new", AGAIN = "(again)";
         AnsiConsole.Clear();
-        const int LIMIT = 5;
         MENU_NAME = "**************\n"
                   + "Reset Password\n"
                   + "**************\n";
         IOConsole.WriteMenu(MENU_NAME);
-        var oldPassword = IOConsole.GetPassword("your old");
+        var oldPassword = IOConsole.GetPassword(OLD);
 
         if (!PasswordUtils.VerifyCustomer(customer.CustomerUsername, oldPassword))
         {
