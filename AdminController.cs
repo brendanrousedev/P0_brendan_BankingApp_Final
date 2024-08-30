@@ -124,7 +124,7 @@ public class AdminController
         Customer? customer = CustomerDao.GetCustomerByUsername(Context, username);
         if (customer == null)
         {
-            AnsiConsole.MarkupLine($"[red]{customer} could not be found.");
+            AnsiConsole.MarkupLine($"[red]{customer} could not be found[/].");
         }
 
         else if (AnsiConsole.Confirm($"Reset password for {username}?"))
