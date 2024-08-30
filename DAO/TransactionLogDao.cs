@@ -10,9 +10,10 @@ public static class TransactionLogDao
                 Acc = account,
                 Amount = amount,
                 TransactionDate = DateTime.Now,
-                TransactionType = "Adjustment"
+                TransactionType = type
             };
-            Context.SaveChanges();
+        Context.TransactionLogs.Add(tl);
+        Context.SaveChanges();
     }
 
     public static void DeleteAllTransactionsForAccount(P0BrendanBankingDbContext Context, Account account)
