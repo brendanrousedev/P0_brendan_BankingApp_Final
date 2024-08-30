@@ -4,6 +4,10 @@ using System.IO;
 using Newtonsoft.Json;
 using P0_brendan_BankingApp_Final.POCO;
 using Spectre.Console;
+
+/*
+ * In this database, the default admin is "owner", and the password is "password123"
+*/
 public class Program
 {
     P0BrendanBankingDbContext Context;
